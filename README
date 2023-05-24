@@ -1,0 +1,9 @@
+This libpkg plugin implements support for handling AppStream metadata.
+
+To enable it make sure it is installed into PKG_PLUGINS_DIR (which is usually
+"/usr/local/lib/pkg/") and is listed in the PLUGINS entry of pkg.conf
+
+The plugin fetches a file named AppStreamComponents.xml.gz which is expected to
+be present at the repository root. It then places it into
+/var/lib/swcatalog/xml/<repository name>-Components.xml.gz location which is
+a well-known place for the AppStream-enabled software.
