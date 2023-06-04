@@ -5,7 +5,9 @@
 .include <bsd.own.mk>
 
 PREFIX?=	/usr/local
+.ifndef LOCALBASE
 LIBPKG_CFLAGS?=	-I/usr/local/include
+.endif
 
 CFLAGS+=	${LIBPKG_CFLAGS}
 LIBDIR=		${PREFIX}/lib/pkg
