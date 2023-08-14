@@ -22,7 +22,7 @@ static char plugin_descr[] = "Plugin for downloading AppStream metadata files";
 static
 int on_update_success_cb(void *data, struct pkgdb *db) {
     int rc;
-    time_t local_t;
+    time_t local_t = 0;
     struct pkg_repo *repo = data;
     struct timespec times[2] = {0};
 
