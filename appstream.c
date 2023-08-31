@@ -15,8 +15,8 @@
 
 #define APPSTREAM_CATALOG_DIR "/var/lib/swcatalog/xml"
 
-static char plugin_name[] = "provides";
-static char plugin_version[] = "1.0.0.0";
+static char plugin_name[] = "appstream";
+static char plugin_version[] = "1.0.2.0";
 static char plugin_descr[] = "Plugin for downloading AppStream metadata files";
 
 static
