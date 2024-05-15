@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Serenity Cyber Security, LLC
+ * Copyright (c) 2023-2024 Serenity Cyber Security, LLC
  * Author: Gleb Popov <arrowd@FreeBSD.org>
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -16,8 +16,10 @@
 #define APPSTREAM_CATALOG_DIR "/var/lib/swcatalog/xml"
 
 static char plugin_name[] = "appstream";
-static char plugin_version[] = "1.0.2.0";
+static char plugin_version[] = "1.0.3.0";
 static char plugin_descr[] = "Plugin for downloading AppStream metadata files";
+
+static struct pkg_plugin* instance = NULL;
 
 static
 int on_update_success_cb(void *data, struct pkgdb *db) {
@@ -33,14 +35,14 @@ int on_update_success_cb(void *data, struct pkgdb *db) {
     tmp_fd = pkg_repo_fetch_remote_tmp(repo,
         "AppStreamComponents", "xml.gz", &local_t, &rc, false);
     if (tmp_fd == -1) {
-        pkg_emit_notice("Repository %s has no AppStream metadata", pkg_repo_name(repo));
+        pkg_plugin_info("Repository %s has no AppStream metadata", pkg_repo_name(repo));
         return EPKG_FATAL;
     }
     appstream_catalog_f = fdopen(tmp_fd, "r");
     rewind(appstream_catalog_f);
 
     if (pkg_mkdirs(APPSTREAM_CATALOG_DIR) != EPKG_OK) {
-        pkg_emit_error("Could not create AppStream catalog directory " APPSTREAM_CATALOG_DIR);
+        pkg_plugin_error(instance, "Could not create AppStream catalog directory " APPSTREAM_CATALOG_DIR);
         return EPKG_FATAL;
     }
 
@@ -48,11 +50,11 @@ int on_update_success_cb(void *data, struct pkgdb *db) {
         APPSTREAM_CATALOG_DIR "/%s-Components.xml.gz", pkg_repo_name(repo));
     appstream_catalog_fd = open(appstream_catalog_path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
     if (appstream_catalog_fd == -1) {
-        pkg_emit_error("Could not create %s: %s", appstream_catalog_path, strerror(errno));
+        pkg_plugin_error(instance, "Could not create %s: %s", appstream_catalog_path, strerror(errno));
         return EPKG_FATAL;
     }
     if (!pkg_copy_file(tmp_fd, appstream_catalog_fd)) {
-        pkg_emit_error("Could not copy to %s: %s", appstream_catalog_path, strerror(errno));
+        pkg_plugin_error(instance, "Could not copy to %s: %s", appstream_catalog_path, strerror(errno));
         return EPKG_FATAL;
     }
 
