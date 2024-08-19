@@ -16,7 +16,7 @@
 #define APPSTREAM_CATALOG_DIR "/var/lib/swcatalog/xml"
 
 static char plugin_name[] = "appstream";
-static char plugin_version[] = "1.0.3.0";
+static char plugin_version[] = "1.0.4.0";
 static char plugin_descr[] = "Plugin for downloading AppStream metadata files";
 
 static struct pkg_plugin* instance = NULL;
@@ -35,7 +35,7 @@ int on_update_success_cb(void *data, struct pkgdb *db) {
     tmp_fd = pkg_repo_fetch_remote_tmp(repo,
         "AppStreamComponents", "xml.gz", &local_t, &rc, false);
     if (tmp_fd == -1) {
-        pkg_plugin_info("Repository %s has no AppStream metadata", pkg_repo_name(repo));
+        pkg_plugin_info(instance, "Repository %s has no AppStream metadata", pkg_repo_name(repo));
         return EPKG_FATAL;
     }
     appstream_catalog_f = fdopen(tmp_fd, "r");
@@ -76,6 +76,8 @@ pkg_plugin_init(struct pkg_plugin *p)
     pkg_plugin_set(p, PKG_PLUGIN_DESC, plugin_descr);
 
     pkg_plugin_hook_register(p, PKG_PLUGIN_HOOK_REPO_UPDATE_SUCCESS, on_update_success_cb);
+
+    instance = p;
 
     return (EPKG_OK);
 }
